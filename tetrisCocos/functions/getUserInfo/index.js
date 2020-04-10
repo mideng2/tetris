@@ -30,33 +30,7 @@ exports.main = async (event, context) => {
         })
       }
     })
-   
-   
-    // db.collection('users').where({
-    //   _openid: wxContext.OPENID
-    // }).get().then(res => {
-    //   if (res.data && res.data.length) {
-    //     resolve({
-    //       errorCode: 0,
-    //       data: res.data[0]
-    //     })
-    //   } else {
-    //     reject()
-    //   }
-    // }).catch((err) => {
-    //   // 无数据
-    //   return initUserInfo()
-
-    // })
   })
-
-  // return {
-  //   errorCode: 0,
-  //   event,
-  //   openid: wxContext.OPENID,
-  //   appid: wxContext.APPID,
-  //   unionid: wxContext.UNIONID,
-  // }
 }
 
 
@@ -77,29 +51,3 @@ function initUserInfo () {
     })
   })
 }
-
-// // 云函数入口函数
-// exports.main = async ({ openid }) => {
-//   console.log('openid', openid)
-//   const db = cloud.database()
-
-//   return new Promise((resolve, reject) => {
-//     db.collection('scores').where({
-//       openid: openid // 填入当前用户 openid
-//     }).get().then(res => {
-//       let result = null
-//       if (res.data && res.data.length) {
-//         result = {
-//           errorCode: 0,
-//           data: res.data[0]
-//         }
-//       } else {
-//         result = {
-//           errorCode: 1
-//         }
-//       }
-//       resolve(result)
-//     })
-//   })
-  
-// }

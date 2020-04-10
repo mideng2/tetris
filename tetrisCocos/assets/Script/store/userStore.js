@@ -34,6 +34,7 @@ class userStore {
 
   set score (val) {
     this._score = val
+    console.log('set score', val)
     NOTIFICATION.emit(ACTIONS.CHANGE_SCORE, val)
   }
 

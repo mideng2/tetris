@@ -47,7 +47,6 @@ cc.Class({
             })
             // 从本地获取用户信息，本地为undefined，从服务器取
             let userInfo = this.userStore.userInfo
-            console.log('initFetch userInfo', userInfo)
             if (userInfo && userInfo.openid) {
                 this.handleUserData()
             } else {
@@ -58,7 +57,6 @@ cc.Class({
 
 
     fetchUserData () {  
-        console.log('fetchUserData')
         wx.cloud.callFunction({
             name: 'getUserInfo'
         }).then(({result}) => {
@@ -71,7 +69,6 @@ cc.Class({
 
     handleUserData (userInfo) {
         this.userStore.userInfo = userInfo
-        // cc.find('Canvas/info/highscore/text').getComponent(cc.Label).string = userInfo.highScore
     },
 
     initEventBind () {
@@ -129,12 +126,10 @@ cc.Class({
         )
 
         NOTIFICATION.on(ACTIONS.CHANGE_USER_INFO, function (userInfo) {
-            console.log('监听userinfochange')
             cc.find('Canvas/info/highscore/text').getComponent(cc.Label).string = userInfo.highScore
         }, this)
 
         NOTIFICATION.on(ACTIONS.CHANGE_SCORE, function (score) {
-            console.log('监听score change')
             cc.find('Canvas/info/score/text').getComponent(cc.Label).string = score
         }, this)
         
@@ -179,9 +174,11 @@ cc.Class({
 
     onDestroy () {
         this.updateHighScore()
+        this.userStore.score = 0
     },
 
     updateHighScore () {
+        console.log('this.userStore.score', this.userStore.score)
         let score = this.userStore.score
         let userInfo = this.userStore.userInfo
         let highScore = userInfo.highScore
@@ -194,9 +191,8 @@ cc.Class({
                 highScore: score
               }
             })
-            this.userStore.userInfo = userInfo
+            this.userStore.userInfo = Object.assign({}, userInfo, highScore)
         }
-        this.userStore.score = 0
     },
 
     newStart() {

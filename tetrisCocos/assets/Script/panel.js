@@ -73,7 +73,7 @@ cc.Class({
     }
     this.drawPanel({ reset: true })
     this.userStore.score = this.userStore.score + delArr.length
-    // cc.find('Canvas/info/score/text').getComponent(cc.Label).string = score
+    console.log('deleteLine score', this.userStore.score)
   },
 
   clearPanel () {

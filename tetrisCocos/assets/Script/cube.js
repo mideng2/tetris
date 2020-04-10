@@ -1,6 +1,5 @@
 
 import { BLOCK_SIZE, DIRECTION, BORDER, LEN } from './util/const'
-import storage from './util/storage'
 cc.Class({
   extends: cc.Component,
 
@@ -56,11 +55,6 @@ cc.Class({
     // 边界判断
     let _x = this.node.x
     let _y = this.node.y
-    // let _width = this.node.width
-    // let _height = this.node.height
-    // if (_height + _x > BORDER.RIGHT || _y - _width < BORDER.BOTTOM) {
-    //   return
-    // }
 
     let newArr = []
     let cubePos = []
@@ -110,26 +104,15 @@ cc.Class({
     // 判断边界
     let _x = this.node.x
     let _y = this.node.y
-    // let _width = this.node.width
-    // let _height = this.node.height
+  
     switch (direction) {
       case DIRECTION.LEFT:
-        // if (_x <= BORDER.LEFT) {
-        //   return
-        // }
         _x -= BLOCK_SIZE
         break
       case DIRECTION.RIGHT:
-        // if (_x + _width >= BORDER.RIGHT) {
-        //   return
-        // }
         _x += BLOCK_SIZE
         break
       case DIRECTION.BOTTOM:
-        // if (_y - _height <= BORDER.BOTTOM) {
-        //   this.moveToBottom()
-        //   return
-        // }
         _y -= BLOCK_SIZE
         break
       default:
