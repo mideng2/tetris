@@ -2,16 +2,12 @@
 
 const NOTIFICATION = require('./notification')
 const ACTIONS = require('./actions')
-import storage from './util/storage'
+import storage from '../util/storage'
 
 
 class userStore {
   constructor() {
-    let data = {
-      _openid: '',
-      highScore: 0
-    }
-    this._userInfo = storage.get('userInfo') || data
+    this._userInfo = null
     this._score = 0
   }
 
@@ -34,7 +30,6 @@ class userStore {
 
   set score (val) {
     this._score = val
-    console.log('set score', val)
     NOTIFICATION.emit(ACTIONS.CHANGE_SCORE, val)
   }
 

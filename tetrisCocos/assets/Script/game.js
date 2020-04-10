@@ -1,4 +1,5 @@
 import { CUBE, DIRECTION } from './util/const'
+import storage from './util/storage'
 const NOTIFICATION = require('./store/notification')
 const ACTIONS = require('./store/actions')
 const UI_ctrl = require('./util/Ui_ctrl')
@@ -30,9 +31,9 @@ cc.Class({
 
         this.cubeComp = this.view['cube'].getComponent('cube')
         this.nextCubeComp = this.view['info/next/cube'].getComponent('cube')
-
-        this.initFetch()
+        
         this.initEventBind()
+        this.initFetch()
     },
 
     start () {
@@ -46,9 +47,9 @@ cc.Class({
                 env: wx.cloud.DYNAMIC_CURRENT_ENV
             })
             // 从本地获取用户信息，本地为undefined，从服务器取
-            let userInfo = this.userStore.userInfo
-            if (userInfo && userInfo.openid) {
-                this.handleUserData()
+            let userInfo = storage.get('userInfo') // this.userStore.userInfo
+            if (userInfo && userInfo._openid) {
+                this.handleUserData(userInfo)
             } else {
                 this.fetchUserData()
             }
@@ -60,7 +61,6 @@ cc.Class({
         wx.cloud.callFunction({
             name: 'getUserInfo'
         }).then(({result}) => {
-            console.log(result)
             if (result && +result.errorCode === 0) {
                 this.handleUserData(result.data)
             }
@@ -68,7 +68,7 @@ cc.Class({
     },
 
     handleUserData (userInfo) {
-        this.userStore.userInfo = userInfo
+        this.userStore.userInfo = Object.assign({}, userInfo)
     },
 
     initEventBind () {
@@ -104,16 +104,33 @@ cc.Class({
             }.bind(this)
         )
 
-        this.view['option/reset'].on(
+        // this.view['option/reset'].on(
+        //     cc.Node.EventType.TOUCH_END,
+        //     function() {          
+        //         this.initCube()
+        //     }.bind(this)
+        // )
+
+        this.view['option/pause'].on(
             cc.Node.EventType.TOUCH_END,
             function() {          
-                this.initCube()
+                let label = this.view['option/pause/label'].getComponent(cc.Label)
+                if (this.isPausing) {
+                    this.countDown()
+                    this.isPausing = false
+                    label.string = '暂停游戏'
+                    this.updateHighScore() // 暂时记录最高分
+                } else {
+                    this.stopCountDown()
+                    this.isPausing = true
+                    label.string = '继续游戏'
+                }
             }.bind(this)
         )
 
         this.view['over/layer'].on(
             cc.Node.EventType.TOUCH_END,
-            function() {          
+            function(e) {          
                 e.stopPropagation()
             }.bind(this)
         )
@@ -163,7 +180,7 @@ cc.Class({
         this.timer = setTimeout(() => {
             this.countDown()
             this.cubeComp.move(DIRECTION.BOTTOM)
-        }, 800);
+        }, 700);
     },
 
     gameOver () {
@@ -174,32 +191,28 @@ cc.Class({
 
     onDestroy () {
         this.updateHighScore()
-        this.userStore.score = 0
     },
 
     updateHighScore () {
-        console.log('this.userStore.score', this.userStore.score)
         let score = this.userStore.score
         let userInfo = this.userStore.userInfo
         let highScore = userInfo.highScore
-        console.log('调用updateHighScore',userInfo,highScore, score)
         if (score > highScore) {
-            console.log('调用updateHighScore', score)
             wx.cloud.callFunction({
               name: 'updateScore',
               data: {
                 highScore: score
               }
             })
-            this.userStore.userInfo = Object.assign({}, userInfo, highScore)
+            this.userStore.userInfo = Object.assign({}, userInfo, { highScore: score })
         }
     },
 
     newStart() {
+        this.userStore.score = 0
         this.view['over'].active = false
         this.view['panel'].getComponent('panel').clearPanel()
         this.initCube()
     }
 
-    // update (dt) {},
 });
