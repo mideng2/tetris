@@ -1,0 +1,4 @@
+export default {
+  CHANGE_USER_INFO: 'CHANGE_USER_INFO',
+  CHANGE_SCORE: 'CHANGE_SCORE'
+}
